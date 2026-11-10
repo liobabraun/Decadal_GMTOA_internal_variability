@@ -1,0 +1,38 @@
+Master Thesis "The Role of Pacific Decadal and Atlantic Multidecadal Variability in Modulating Top-of-Atmosphere Net Radiation - A Storyline Approach" in M.Sc. Earth System Data Science and Remote Sensing at Leipzig University. The full thesis is available upon request from the author.
+
+| notebook | what it does | reads | writes |
+|---|---|---|---|
+| `01_piControl_annual_anomalies` | annual anomalies of every variable and the annual PDV/AMV indices; the only notebook that reads raw model output | raw CESM2 output | `<name>_annual_anom.nc`, `PDV_AMV_annual.nc` |
+| `02_piControl_decadal_storylines` | 110 non-overlapping decades, classified into four PDV/AMV storylines; composite maps of every variable | output of 01 | `piControl/ivs_SST.nc`, `piControl/decadal/` |
+| `03_piControl_lowpass_MLR` | 10-year Lanczos low-pass; multiple linear regression of GMTOA on PDV and AMV (states and rates of change) | output of 01 and 02 | `piControl/lanczos/mlr_coef_maps.nc` |
+| `04_piControl_state_transition` | lead-lag regression of TOA on PDV and AMV, state versus transition, and what carries the transition signal (SW, LW, clouds, LTS) | output of 01 | `piControl/lanczos/` |
+
+The numbered notebooks form the main analysis pipeline. The supplementary
+notebook `derive_omega500_regions` derives the mean vertical velocity at 500 hPa
+and documents the three analysis regions used in the study. It writes
+`data/piControl/wap_500_mean.nc` and displays the `omega500_regions` map; it is
+not required to run notebooks 01–04.
+
+All anomalies are annual means with the first 100 years dropped (spin-up) and the linear trend removed, which leaves 1100 years. 03 and 04 then apply the low-pass filter, which leaves 1060 years.
+
+## Data
+
+The input is the CESM2 piControl run of CMIP6 (`r1i1p1f1`, 1200 years, monthly). It can be downloaded from ESGF (e.g. https://metagrid.esgf-west.org/search, source `CESM2`, experiment `piControl`).
+
+| variable | table | used for |
+|---|---|---|
+| `ts` | Amon | SST, PDV and AMV indices |
+| `sftlf` | fx | land-sea mask |
+| `rsdt`, `rsut`, `rlut` | Amon | TOA shortwave and longwave |
+| `ta`, `tas` | Amon | lower-tropospheric stability |
+| `cl` | Amon | low, middle and high cloud cover (and `ps` for the pressure levels) |
+| `wap` | Amon | vertical pressure velocity at 500 hPa and definition of the analysis regions |
+
+01 expects one folder per variable (`data_dir/ts/*.nc`, `data_dir/cl/*.nc`, …). The files of a folder are read together and do not have to be merged first.
+
+## Running
+
+1. Set the paths in the **Config** cell at the top of each notebook: `data_dir` and `mask_path` for the raw data (01), and the data and output folders (`anom_dir`, `out_dir`, `results_dir`, `decadal_dir`). The supplementary `derive_omega500_regions` notebook additionally needs the raw `wap` directory.
+2. Run the numbered notebooks in order. Results that already exist are read back instead of being computed again; `overwrite = True` (01, 02) or `recompute = True` (03, 04) builds them anew. The supplementary notebook follows the same pattern: it loads `wap_500_mean.nc` if present and recalculates it only when `overwrite = True`.
+
+The other settings are in the Config cell as well, e.g. the filter cutoff, the size of the neutral class, the significance level, the colour scales, and `save_figures` to write the figures to disk.
