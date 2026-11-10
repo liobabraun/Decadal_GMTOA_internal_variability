@@ -1,15 +1,38 @@
+# Decadal_GMTOA_internal_variability
+
 Master Thesis "The Role of Pacific Decadal and Atlantic Multidecadal Variability in Modulating Top-of-Atmosphere Net Radiation - A Storyline Approach" in M.Sc. Earth System Data Science and Remote Sensing at Leipzig University. The full thesis is available upon request from the author.
 
-| notebook | what it does | reads | writes |
-|---|---|---|---|
-| `01_piControl_annual_anomalies` | annual anomalies of every variable and the annual PDV/AMV indices; the only notebook that reads raw model output | raw CESM2 output | `<name>_annual_anom.nc`, `PDV_AMV_annual.nc` |
-| `02_piControl_decadal_storylines` | 110 non-overlapping decades, classified into four PDV/AMV storylines; composite maps of every variable | output of 01 | `piControl/ivs_SST.nc`, `piControl/decadal/` |
-| `03_piControl_lowpass_MLR` | 10-year Lanczos low-pass; multiple linear regression of GMTOA on PDV and AMV (states and rates of change) | output of 01 and 02 | `piControl/lanczos/mlr_coef_maps.nc` |
-| `04_piControl_state_transition` | lead-lag regression of TOA on PDV and AMV, state versus transition, and what carries the transition signal (SW, LW, clouds, LTS) | output of 01 | `piControl/lanczos/` |
+## Analysis notebooks
 
-The numbered notebooks form the main analysis pipeline. The supplementary
-notebook `derive_omega500_regions` derives the mean vertical velocity at 500 hPa
-and documents the three analysis regions used in the study. It writes
+The numbered notebooks form the main analysis pipeline and should be run in
+order:
+
+- **`01_piControl_annual_anomalies`**  
+  Calculates annual anomalies for all variables and derives the annual PDV and
+  AMV indices. This is the only notebook that reads the raw model output.
+  It writes `<name>_annual_anom.nc` and `PDV_AMV_annual.nc`.
+
+- **`02_piControl_decadal_storylines`**  
+  Classifies 110 non-overlapping decades into four PDV/AMV storylines and
+  calculates composite maps for the variables. It reads the output of notebook
+  01 and writes `piControl/ivs_SST.nc` and `piControl/decadal/`.
+
+- **`03_piControl_lowpass_MLR`**  
+  Applies a 10-year Lanczos low-pass filter and performs multiple linear
+  regression of GMTOA on PDV and AMV states and rates of change. It reads the
+  output of notebooks 01 and 02 and writes
+  `piControl/lanczos/mlr_coef_maps.nc`.
+
+- **`04_piControl_state_transition`**  
+  Performs lead-lag regressions of TOA on PDV and AMV and analyses states,
+  transitions, and the contributions of SW, LW, clouds, and LTS. It reads the
+  output of notebook 01 and writes results to `piControl/lanczos/`.
+
+## Supplementary notebook
+
+The notebook `derive_omega500_regions` derives the mean vertical pressure
+velocity at 500 hPa and documents the three analysis regions used in the study.
+It writes
 `data/piControl/wap_500_mean.nc` and displays the `omega500_regions` map; it is
 not required to run notebooks 01–04.
 
