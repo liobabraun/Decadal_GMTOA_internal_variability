@@ -36,6 +36,14 @@ It writes
 `data/piControl/wap_500_mean.nc` and displays the `omega500_regions` map; it is
 not required to run notebooks 01–04.
 
+## Shared functions
+
+The file `functions.py` contains helper functions used by the notebooks for
+data loading and preprocessing, anomaly calculation, region selection,
+storyline classification, filtering, regression, significance testing, and
+plotting. It also stores the common definitions of the three analysis regions
+used throughout the analysis.
+
 All anomalies are annual means with the first 100 years dropped (spin-up) and the linear trend removed, which leaves 1100 years. 03 and 04 then apply the low-pass filter, which leaves 1060 years.
 
 ## Data
